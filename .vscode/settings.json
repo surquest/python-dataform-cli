@@ -1,8 +1,8 @@
 {
     "IDX.aI.enableInlineCompletion": true,
     "IDX.aI.enableCodebaseIndexing": true,
-    "x.python.testing.pytestArgs": [
-        "tests"
+    "python.testing.pytestArgs": [
+        "test"
     ],
     "x.python.envFile": "${workspaceFolder}/.env.PROD.firebase-studio",
     "terminal.integrated.env.linux": {

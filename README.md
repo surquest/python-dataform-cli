@@ -58,6 +58,14 @@ Place your Service Account JSON key in your working directory (e.g., `sa.json`).
 Fetches files from all workspaces in the Dataform repository.
 
 ```bash
+
+python -m surquest.GCP.dataform_cli pull   \
+ --project-id=analytics-data-mart \
+ --region=us-central1 \
+ --repository-id=etl--user-acquisition \
+ --workspace-id=dev--workspace \
+ --target-dir=../dataform
+
 docker run --rm \
   -v $PWD:/app \
   -v $PWD/sa.json:/app/sa.json \

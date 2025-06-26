@@ -1,0 +1,74 @@
+config {
+    type: "table",
+    description: "Temporary table with events from Appsflyer",
+    columns: {
+        source: "Name of the data source",
+        app_name: "Name of the app",
+        store_name: "Name of the store",
+        uid_type: "Type of the user identifier",
+        uid_value: "Value of the user identifier",
+        idfa: "Apple IDFA: The Identifier for Advertisers (IDFA) is a random device identifier assigned by Apple to a user’s device.",
+        idfv: "Apple IDFV: The Identifier for Vendors (IDFV) is a code assigned to all apps by one developer and is shared across all apps by that developer on your device.",
+        advertising_id: "Google GAID: The advertising ID is a unique, user-resettable ID for advertising, provided by Google Play services.",
+        android_id: "Google SSAID: The Android unique device ID.",
+        first_seen: "The datetime of first occurrence in data",
+        country_code: "2-letters country identifier",
+        network: "Ad network / provider",
+        segment: "Group of ads within the network / provider",
+        campaign: "UA campaign name",
+        partner_campaign: "Name of the UA campaign on partner site"
+    }
+}
+
+js {
+   console.log(constants.config); 
+}
+
+WITH events AS (
+  SELECT
+    'appsflyer' AS src,
+    'events' AS tbl,
+    '${udfs.getConfig().name}' AS vars,
+    UPPER(country_code) AS country_code,
+    media_source AS network,
+    media_source AS segment,
+    ${udfs.getColumnNullableId('idfa')},
+    ${udfs.getColumnNullableId('idfv')},
+    ${udfs.getColumnNullableId('advertising_id')},
+    ${udfs.getColumnNullableId('android_id')},
+    event_time AS first_seen,
+    campaign,
+    CASE
+      WHEN media_source IN ('googleadwords_int') THEN campaign
+      ELSE CASE
+      WHEN af_adset IS NULL THEN campaign
+      ELSE af_adset
+  END
+  END
+    AS partner_campaign,
+    event_time AS event_time,
+    event_name AS event_name,
+    SAFE_CAST( REPLACE( REPLACE(event_revenue, ',', '.'), '$','' ) AS BIGNUMERIC ) AS event_value,
+    event_revenue_usd AS event_value_usd
+  FROM
+    ${udfs.getFQN("appsflyer", "events", constants.config)}
+  )
+
+SELECT
+    '${udfs.getConfig().name}' as env,
+    src,
+    tbl,
+    --   app_name,
+    --   store_name,
+    idfa,
+    idfv,
+    advertising_id,
+    android_id,
+    first_seen AS first_seen,
+    DATE(event_time) AS event_date,
+    event_time,
+    event_name,
+    event_value,
+    event_value_usd
+  FROM
+    events

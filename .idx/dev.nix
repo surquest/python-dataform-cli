@@ -51,8 +51,8 @@
         create-venv = ''
           python -m venv .venv
           source .venv/bin/activate
-          pip install -r src/surquest/GCP/dataform-cli/requirements.txt
-        
+          pip install -r src/surquest/GCP/requirements.txt
+          pip install -r test/surquest/GCP/requirements.txt
         '';
         set-credentials = ''
           gcloud auth application-default login --impersonate-service-account="adm--deployer@analytics-data-mart.iam.gserviceaccount.com"
