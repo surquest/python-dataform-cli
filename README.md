@@ -110,11 +110,18 @@ docker run --rm \
 ### Fetch all files:
 
 ```bash
-docker run --rm -v $PWD:/app -v $PWD/sa.json:/app/sa.json dataform-cli \
-  --project my-project \
+docker build --tag surquest/dataform-cli:dev --file Dockerfile --target base .
+
+docker run -it --rm \
+  -v $PWD/src/surquest/GCP/dataform-cli:/app/dataform-cli \
+  -v $PWD/credentials/PROD/sa.keyfile.json:/app/credentials/sa.keyfile.json \
+  -e GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/sa.keyfile.json \
+  surquest/dataform-cli:dev \
+  python /app/dataform-cli/main.py \
+  --project analytics-data-mart \
   --location us-central1 \
-  --repo my-repo \
-  --sa-file /app/sa.json
+  --repo etl--user-acquisition \
+  --sa-file /app/credentials/sa.keyfile.json
 ```
 
 ### Push code:

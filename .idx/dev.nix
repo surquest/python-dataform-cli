@@ -51,12 +51,12 @@
         create-venv = ''
           python -m venv .venv
           source .venv/bin/activate
-          pip install -r src/requirements.txt
+          pip install -r src/surquest/GCP/dataform-cli/requirements.txt
         
         '';
         set-credentials = ''
-          gcloud auth application-default login --impersonate-service-account="etl--pubsub-bq-bridge@analytics-data-mart.iam.gserviceaccount.com"
-          cp /home/user/.config/gcloud/application_default_credentials.json ./credentials/GCP/PROD/runtime.keyfile.json
+          gcloud auth application-default login --impersonate-service-account="adm--deployer@analytics-data-mart.iam.gserviceaccount.com"
+          cp /home/user/.config/gcloud/application_default_credentials.json ./credentials/PROD/sa.keyfile.json
         '';
       };
     };

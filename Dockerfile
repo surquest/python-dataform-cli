@@ -19,8 +19,8 @@ COPY ./src/surquest/GCP/dataform-cli/requirements.txt /tmp/requirements.txt
 
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
+FROM base AS app
 
-
-COPY main.py .
+COPY ./src/surquest/GCP/dataform-cli ./app/dataform-cli
 
 ENTRYPOINT ["python", "src/surquest/GCP/dataform-cli/main.py"]

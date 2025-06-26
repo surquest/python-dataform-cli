@@ -4,16 +4,21 @@ import argparse
 import os
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+import google.auth
+
+
 
 SCOPES = ["https://www.googleapis.com/auth/cloud-platform"]
 
 def get_dataform_service(sa_file):
-    credentials = service_account.Credentials.from_service_account_file(sa_file, scopes=SCOPES)
+    # credentials = service_account.Credentials.from_service_account_file(sa_file, scopes=SCOPES)
+    # Get the default credentials and project ID
+    credentials, project_id = google.auth.default()
     service = build("dataform", "v1beta1", credentials=credentials)
     return service
 
-def list_workspaces(service, project, location, repository_id):
-    parent = f"projects/{project}/locations/{location}/repositories/{repository_id}"
+def list_workspaces(service, project, location, repository):
+    parent = f"projects/{project}/locations/{location}/repositories/{repository}"
     workspaces = []
     request = service.projects().locations().repositories().workspaces().list(parent=parent)
     while request is not None:
@@ -23,9 +28,10 @@ def list_workspaces(service, project, location, repository_id):
             previous_request=request, previous_response=response)
     return workspaces
 
-def list_files_in_workspace(service, workspace_name):
+def list_files_in_workspace(service, workspace, project, location, repository):
     files = []
-    request = service.projects().locations().repositories().workspaces().listFiles(name=workspace_name)
+    parent = f"projects/{project}/locations/{location}/repositories/{repository}"
+    request = service.projects().locations().repositories().workspaces().list(parent=parent)
     response = request.execute()
     files.extend(response.get("files", []))
     return files
@@ -63,13 +69,13 @@ def create_workspace_if_missing(service, project, location, repo, workspace_id):
             parent=parent, body={}, workspaceId=workspace_id
         ).execute()
 
-def fetch_repository_content(project, location, repository_id, sa_file):
+def fetch_repository_content(project, location, repository, sa_file):
     service = get_dataform_service(sa_file)
-    workspaces = list_workspaces(service, project, location, repository_id)
+    workspaces = list_workspaces(service, project, location, repository)
     for workspace in workspaces:
         name = workspace["name"]
         print(f"\n=== Files in workspace: {name} ===")
-        files = list_files_in_workspace(service, name)
+        files = list_files_in_workspace(service, name, project, location, repository)
         for file in files:
             path = file.get("path")
             print(f"\nFile: {path}")
