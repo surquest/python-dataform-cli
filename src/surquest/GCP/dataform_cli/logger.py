@@ -26,7 +26,7 @@ class FixedWidthFormatter(logging.Formatter):
         """
         level = record.levelname.ljust(7)  # Pad level to align messages
         timestamp = datetime.fromtimestamp(record.created).strftime(self.datefmt)
-        title = getattr(record, 'title', 'Unknown')  # Optional custom field
+        title = getattr(record, 'title', '-')  # Optional custom field
         message = record.getMessage()
         return f"{level} {timestamp}  {title} {message}"
 

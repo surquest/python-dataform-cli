@@ -102,7 +102,7 @@ class PushHandler(DataformHandler):
 
         request = dataform_v1.CommitWorkspaceChangesRequest(
             name=workspace_path,
-            message=message,
+            commit_message=message,
             author=author,
         )
 

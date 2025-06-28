@@ -1,3 +1,11 @@
+import os
+from google.api_core import exceptions
+from .handlers.gitignore_handler import GitignoreHandler
+from .handlers.pull_handler import PullHandler
+from .handlers.push_handler import PushHandler
+from .logger import get_fixed_width_logger
+
+
 def push(
         project_id,
         region,
@@ -37,8 +45,10 @@ def push(
 
     logger.info("Retrieving remote files...")
     try:
-        remote_files_response = PushHandler.dataform_client.list_files(workspace=workspace_path)
-        remote_files = sorted([file_.path for file_ in remote_files_response])
+        remote_files = PullHandler.get_workspace_files(
+            workspace_path=workspace_path,
+            gitignore_handler=GitignoreHandler(".gitignore")
+        )
     except exceptions.GoogleAPICallError as e:
         logger.error(f"Failed to list remote files: {e}")
         remote_files = []
