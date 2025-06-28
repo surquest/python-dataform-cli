@@ -1,5 +1,0 @@
-defaultProject: analytics-data-mart
-defaultLocation: US
-defaultDataset: adm_ua_reporting
-defaultAssertionDataset: adm_ua_reporting
-dataformCoreVersion: 3.0.0

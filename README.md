@@ -7,7 +7,7 @@
 It helps developers:
 - Avoid repetitive UI interactions.
 - Manage versioning consistently with `.gitignore`.
-- Automate CI/CD tasks for Dataform repositories from on-premise hosted Gitlab 
+- Automate CI/CD tasks for Dataform repositories.
 
 ---
 
@@ -56,6 +56,49 @@ python -m surquest.GCP.dataform_cli pull \
 
 ---
 
+## 🐳 Using the CLI via Docker
+
+You can run the CLI inside a Docker container, mounting your local source or target directory as a volume, and passing your Google credentials via an environment variable.
+
+```bash
+docker run --rm -it \
+  -v /path/to/local/source:/app/source \
+  -e GOOGLE_APPLICATION_CREDENTIALS=/app/creds.json \
+  -v /path/to/your/creds.json:/app/creds.json:ro \
+  your-docker-image-name \
+  python -m surquest.GCP.dataform_cli push \
+    --project-id=my-gcp-project \
+    --region=europe-west1 \
+    --repository-id=my-repo \
+    --workspace-id=dev \
+    --source-dir=/app/source
+```
+
+Similarly, for pulling files:
+
+```bash
+docker run --rm -it \
+  -v /path/to/local/target:/app/target \
+  -e GOOGLE_APPLICATION_CREDENTIALS=/app/creds.json \
+  -v /path/to/your/creds.json:/app/creds.json:ro \
+  your-docker-image-name \
+  python -m surquest.GCP.dataform_cli pull \
+    --project-id=my-gcp-project \
+    --region=europe-west1 \
+    --repository-id=my-repo \
+    --workspace-id=dev \
+    --target-dir=/app/target
+```
+
+**Notes:**
+
+* Replace `/path/to/local/source` and `/path/to/local/target` with your actual local paths.
+* The service account key JSON file is mounted inside the container at `/app/creds.json`.
+* The `GOOGLE_APPLICATION_CREDENTIALS` environment variable points to this file for authentication.
+* `your-docker-image-name` should be replaced with your built Docker image tag.
+
+---
+
 ## 🛠 Requirements
 
 * Python 3.8+
@@ -71,4 +114,3 @@ For issues, improvements, or collaboration, please contact:
 **Michal Švarc**
 ✉️ \[[michal.svarc@surquest.com](mailto:michal.svarc@surquest.com)]
 📞 +420 724 031 631
-
