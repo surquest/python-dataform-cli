@@ -83,6 +83,91 @@ class PullHandler(DataformHandler):
 
         return sorted(files)
 
+    @staticmethod
+    def get_empty_directories(empty_dirs, files):
+        """
+        Returns the highest-level empty directories from the provided list of empty_dirs,
+        excluding those that have any files within them or their subdirectories.
+
+        For each empty directory, it checks each level of its path from root
+        and includes the first level that does not contain any file paths.
+
+        Args:
+            empty_dirs (List[str]): List of directories known to be empty (may contain subdirs).
+            files (List[str]): List of full file paths present in the system.
+
+        Returns:
+            List[str]: List of top-level empty directories that do not contain any files.
+        """
+        truly_empty = []
+
+        for empty_dir in empty_dirs:
+            # Normalize path and determine directory depth (0 = root)
+            norm_dir = os.path.normpath(empty_dir)
+            level = norm_dir.count(os.sep)
+
+            # Walk from root to this directory level
+            for l in range(level + 1):
+                # Rebuild the sub-path for current level
+                subfolder = os.sep.join(norm_dir.split(os.sep)[:l + 1])
+                is_in_files_path = False
+
+                # Check if any file path starts with this subfolder path
+                for file_path in files:
+                    if file_path.startswith(subfolder):
+                        is_in_files_path = True
+                        break  # No need to check more files
+
+                # If no file is in this subfolder or below, it's truly empty
+                if not is_in_files_path:
+                    truly_empty.append(subfolder)
+                    break  # Stop checking higher levels for this directory
+
+        return sorted(list(set(truly_empty)))
+
+
+    @classmethod
+    def get_workspace_directories(cls, workspace_path, gitignore_handler=None):
+        """
+        Retrieves all subdirectories in the workspace, optionally applying .gitignore filtering.
+
+        Args:
+            workspace_path (str): The workspace path to start from.
+            gitignore_handler (GitignoreHandler, optional): Handler to filter out ignored paths.
+
+        Returns:
+            List[dict]: Sorted list of directories in the workspace with flag indicating if the directory has any content
+        """
+
+        empty_dirs = []
+        nonempty_dirs = []
+
+        files, directories = cls.get_workspace_path_structure(
+            workspace_path=workspace_path,
+            gitignore_handler=gitignore_handler
+        )
+
+        while directories:
+
+            for directory in list(directories):  # make a copy to modify the original list
+
+                sub_files, sub_dirs = cls.get_workspace_path_structure(
+                    workspace_path=workspace_path,
+                    path=directory,
+                    gitignore_handler=gitignore_handler
+                )
+
+                directories.remove(directory)
+                directories.extend(sub_dirs)
+
+                if not sub_files and not sub_dirs:
+                    empty_dirs.append(directory)
+                else:
+                    nonempty_dirs.append(directory)
+
+        return sorted(empty_dirs), sorted(nonempty_dirs)
+
+
     @classmethod
     def get_workspace_path_structure(cls, workspace_path, path=None, gitignore_handler=None):
         """

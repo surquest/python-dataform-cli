@@ -33,7 +33,7 @@ python -m surquest.GCP.dataform_cli push \
   --repository-id=my-repo \
   --workspace-id=dev \
   --source-dir=./src
-````
+```
 
 Optional flags:
 

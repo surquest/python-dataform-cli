@@ -68,6 +68,28 @@ def push(
             logger.info(f"Deleting remote file: {file_path}")
             PushHandler.remove_file(file_path, workspace_path)
 
+    # Get directories from remote repository
+    remote_empty_dirs, remote_nonempty_dirs = PullHandler.get_workspace_directories(
+        workspace_path=workspace_path,
+        gitignore_handler=GitignoreHandler(gitignore_path=".gitignore")
+    )
+    # Ger files from remote repository
+    remote_files = PullHandler.get_workspace_files(
+        workspace_path=workspace_path,
+        gitignore_handler=GitignoreHandler(gitignore_path=".gitignore")
+    )
+    # Get trully empty dirs:
+    trully_empty_dirs = PullHandler.get_empty_directories(
+        empty_dirs=remote_empty_dirs,
+        files=remote_files
+    )
+
+    if len(trully_empty_dirs) > 0:
+        logger.info(f"Deleting empty directories: count of trully directories is {len(trully_empty_dirs)}")
+        for empty_dir in trully_empty_dirs:
+            logger.info(f"Deleting trully empty directory: {empty_dir}")
+            PushHandler.remove_directory(empty_dir, workspace_path)
+
     # Commit changes if enabled
     if autocommit:
         logger.info("Committing workspace changes...")

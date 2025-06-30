@@ -195,3 +195,6 @@ cython_debug/
 
 # Credentials & secrets
 credentials
+
+# Node
+node_modules

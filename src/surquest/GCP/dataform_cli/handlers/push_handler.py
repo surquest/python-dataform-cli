@@ -80,6 +80,25 @@ class PushHandler(DataformHandler):
         response = cls.dataform_client.remove_file(request=request)
 
     @classmethod
+    def remove_directory(cls, dir_path, workspace_path):
+        """
+        Removes a directory from the remote Dataform workspace.
+
+        Args:
+            dir_path (str): Relative path of the directory to remove.
+            workspace_path (str): Fully qualified workspace path.
+
+        Returns:
+            None
+        """
+        request = dataform_v1.RemoveDirectoryRequest(
+            workspace=workspace_path,
+            path=dir_path
+        )
+
+        response = cls.dataform_client.remove_directory(request=request)
+
+    @classmethod
     def commit_workspace_changes(cls, workspace_path, message=None):
         """
         Commits staged changes in a Dataform workspace.
