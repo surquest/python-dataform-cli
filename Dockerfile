@@ -24,3 +24,9 @@ FROM base AS app
 COPY ./src/surquest/GCP/dataform-cli ./app/dataform-cli
 
 ENTRYPOINT ["python", "src/surquest/GCP/dataform-cli/main.py"]
+
+FROM python:3.13-alpine AS cli
+
+RUN pip install surquest-GCP-dataform-cli
+
+ENTRYPOINT [dataform_cli]
