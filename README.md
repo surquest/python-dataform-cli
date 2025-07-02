@@ -62,11 +62,11 @@ You can run the CLI inside a Docker container, mounting your local source or tar
 
 ```bash
 docker run --rm -it \
-  -v /path/to/local/source:/app/source \
-  -e GOOGLE_APPLICATION_CREDENTIALS=/app/creds.json \
+  -v /path/to/local/target:/app/target \
   -v /path/to/your/creds.json:/app/creds.json:ro \
-  your-docker-image-name \
-  python -m surquest.GCP.dataform_cli push \
+  -e GOOGLE_APPLICATION_CREDENTIALS=/app/creds.json \
+  surquest/dataform-cli:latest \
+  push \
     --project-id=my-gcp-project \
     --region=europe-west1 \
     --repository-id=my-repo \
@@ -79,10 +79,10 @@ Similarly, for pulling files:
 ```bash
 docker run --rm -it \
   -v /path/to/local/target:/app/target \
-  -e GOOGLE_APPLICATION_CREDENTIALS=/app/creds.json \
   -v /path/to/your/creds.json:/app/creds.json:ro \
-  your-docker-image-name \
-  python -m surquest.GCP.dataform_cli pull \
+  -e GOOGLE_APPLICATION_CREDENTIALS=/app/creds.json \
+  surquest/dataform-cli:latest \
+  pull \
     --project-id=my-gcp-project \
     --region=europe-west1 \
     --repository-id=my-repo \
@@ -104,6 +104,19 @@ docker run --rm -it \
 * Python 3.8+
 * `google-cloud-dataform`
 * Service account or user credentials with access to the Dataform API.
+
+---
+## Local development
+
+Following snippets helps you to speed up local development onboarding
+
+```bash
+# Build image for CLI via docker container
+docker build -t surquest/dataform-cli:latest -f Dockerfile --target cli .
+
+# Push image to Docker Hub
+docker push surquest/dataform-cli:latest
+```
 
 ---
 

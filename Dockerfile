@@ -27,6 +27,13 @@ ENTRYPOINT ["python", "src/surquest/GCP/dataform-cli/main.py"]
 
 FROM python:3.13-alpine AS cli
 
+# Install build tools and pip dependencies
+RUN apk add --no-cache build-base
+
+# Set working directory
+WORKDIR /app
+
+# Install your package (uses pyproject.toml)
 RUN pip install surquest-GCP-dataform-cli
 
-ENTRYPOINT [dataform_cli]
+ENTRYPOINT ["dataform_cli"]
