@@ -27,7 +27,7 @@ test = [
 "Bug Tracker" = "https://github.com/surquest/python-dataform-cli/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["surquest"]
+packages = ["src/surquest"]
 
 [tool.hatch.build.targets.sdist.sources]
 "src" = ""
