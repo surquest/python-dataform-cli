@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "surquest-GCP-dataform-cli"
-version = "0.0.1rc1"
+version = "0.0.1rc2"
 description = "`dataform_cli` is a lightweight Python-based command-line interface (CLI) designed to simplify **file synchronization between local directories and Google Cloud Dataform workspaces**."
 authors = [
     {name= "Michal Švarc", email= "michal.svarc@surquest.com"}
