@@ -28,6 +28,3 @@ test = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/surquest"]
-
-[tool.hatch.build.targets.sdist.sources]
-"src" = ""
